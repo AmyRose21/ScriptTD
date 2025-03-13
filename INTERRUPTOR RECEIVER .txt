@@ -1,8 +1,26 @@
 local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
 local Debris = game:GetService("Debris")
-
 local LocalPlayer = Players.LocalPlayer
+
+-- Lista exacta de mensajes válidos
+local dashMessages = {
+    ["👎✌💧☟📂"] = true,
+    ["👎✌💧☟📄"] = true,
+    ["👎✌💧☟🗏"] = true,
+}
+
+local hoverMessages = {
+    ["💧☟✌👎⚐🕈📂"] = true,
+    ["💧☟✌👎⚐🕈📄"] = true,
+    ["💧☟✌👎⚐🕈🗏"] = true,
+}
+
+local stopHoverMessages = {
+    ["☞✋☠✋💧☟📂"] = true,
+    ["☞✋☠✋💧☟📄"] = true,
+    ["☞✋☠✋💧☟🗏"] = true,
+}
 
 -- Función que se ejecuta cada vez que se recibe un mensaje por el chat moderno.
 local function onMessageReceived(messageObject)
@@ -15,32 +33,32 @@ local function onMessageReceived(messageObject)
         if senderPlayer and senderPlayer.Character and senderPlayer.Character:FindFirstChild("HumanoidRootPart") then
             local hrp = senderPlayer.Character.HumanoidRootPart
 
-            -- [NUEVO] Si el mensaje es "use dash", reproducimos el sonido en el HRP del remitente.
-            if text == "👎✌💧☟📂" or text == "👎✌💧☟📄" or text == "👎✌💧☟🗏" then
+            -- Si el mensaje coincide exactamente con alguno de los mensajes definidos:
+            if dashMessages[text] then
                 local dashSound = Instance.new("Sound")
                 dashSound.SoundId = "rbxassetid://18400344659"
                 dashSound.Volume = 2
                 dashSound.Parent = hrp
                 dashSound:Play()
                 Debris:AddItem(dashSound, 5)
-            end
-			
-			if text == "💧☟✌👎⚐🕈📂" or text == "💧☟✌👎⚐🕈📄" or text == "💧☟✌👎⚐🕈🗏" then
+
+            elseif hoverMessages[text] then
                 local hoverSound = Instance.new("Sound")
                 hoverSound.SoundId = "rbxassetid://18400344659"
                 hoverSound.Volume = 2
                 hoverSound.Parent = hrp
                 hoverSound:Play()
                 Debris:AddItem(hoverSound, 5)
-            end
-			
-			if text == "☞✋☠✋💧☟📂" or text == "☞✋☠✋💧☟📄" or text == "☞✋☠✋💧☟🗏" then
-			hoverTrack:Stop()
-			
-			end
 
-            -- Si se quieren procesar más mensajes (ejemplo: "uso habilidad A"), 
-            -- se puede agregar aquí otro bloque if text == "uso habilidad A" then ...
+            elseif stopHoverMessages[text] then
+                if hoverTrack then -- Asegúrate de verificar si existe antes de detenerlo.
+                    hoverTrack:Stop()
+                end
+
+            elseif text == "uso habilidad A" then
+                -- Aquí puedes agregar tu lógica adicional para "uso habilidad A"
+            end
+
         end
     end
 end
